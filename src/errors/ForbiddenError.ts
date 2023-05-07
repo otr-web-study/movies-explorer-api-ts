@@ -1,7 +1,9 @@
 import { ERROR_FORBIDDEN } from '../config/constants';
 
+export const FORBIDDEN_ERROR = 403;
+
 class ForbiddenError extends Error {
-  statusCode = 403;
+  statusCode = FORBIDDEN_ERROR;
   name = 'ForbiddenError';
 
   constructor(message?: string) {

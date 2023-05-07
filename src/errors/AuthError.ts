@@ -1,8 +1,9 @@
 import { ERROR_WRONG_EMAIL_PASSWORD } from '../config/constants';
 
+export const AUTH_ERROR_CODE = 401;
 
 class AuthError extends Error{
-  statusCode = 401;
+  statusCode = AUTH_ERROR_CODE;
   name = 'AuthError';
 
   constructor(message?: string) {

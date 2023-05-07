@@ -4,7 +4,7 @@ const cors = (req: Request, res: Response, next: NextFunction) => {
   const allowedCors = [
     'https://otrdiplom.nomoredomains.sbs',
     'http://otrdiplom.nomoredomains.sbs',
-    'http://localhost:3001',
+    'http://localhost:3000',
   ];
   const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
   const { origin } = req.headers;

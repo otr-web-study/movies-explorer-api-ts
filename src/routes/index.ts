@@ -4,13 +4,15 @@ import moviesRouter from './movies';
 import authRouter from './auth';
 import ObjectNotFoundError from '../errors/ObjectNotFoundError';
 import { ERROR_WRONG_PATH } from '../config/constants';
-import auth from '../middlewares/auth';
+import { auth , checkAuth } from '../middlewares/auth';
 
 const router = Router();
 
+router.use((auth as RequestHandler));
+
 router.use('/', authRouter);
 
-router.use((auth as RequestHandler));
+router.use((checkAuth as RequestHandler));
 
 router.use('/users', usersRouter);
 router.use('/movies', moviesRouter);

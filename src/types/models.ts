@@ -6,6 +6,8 @@ export interface IUser extends Document {
   password: string,
 }
 
+export type RespondUser = Omit<IUser, 'password'>
+
 export interface IMovie extends Document {
   country: string,
   director: string,

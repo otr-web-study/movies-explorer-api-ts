@@ -3,10 +3,10 @@ import CommonServerError from '../errors/CommonServerError';
 import ConflictError from '../errors/ConflictError';
 import { MESSAGE_ERROR_HAPPENED, ERROR_VALIDATION } from '../config/constants';
 import { MongoError } from 'mongodb';
-import { AllError } from '../types/error';
+import { AllError, AppError } from '../types/error';
 import { NextFunction, Request, Response } from 'express';
 
-const handleError = (err: AllError) => {
+const handleError = (err: AllError): AppError => {
   if ('statusCode' in err && err.statusCode) {
     return err;
   }
@@ -15,7 +15,7 @@ const handleError = (err: AllError) => {
     return new ValidationError(`${ERROR_VALIDATION}: ${err.message}`);
   }
 
-  if (err.name === 'MongoError' && (err as MongoError).code === 11000) {
+  if (err.name.toLowerCase().includes('mongo') && (err as MongoError).code === 11000) {
     return new ConflictError();
   }
 
