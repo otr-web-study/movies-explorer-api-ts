@@ -1,22 +1,32 @@
-import { createNewUser, login } from '../../sharedControllers/users';
+import {
+  createNewUser,
+  login,
+  getCurrentUser,
+  updateUser,
+} from '../../sharedControllers/users';
 import { handleError } from '../errorHandlers';
 import { AllError } from '../../types/error';
+import { IAuthPayload } from '../../types/auth';
+import { IUser } from '../../types/models';
 
 interface CreateUserArgs {
-  data: {
-    name: string,
-    email: string,
-    password: string,
-  }
+  data: IUser
 }
-
-interface LoginArgs extends Omit<CreateUserArgs, 'name'> {}
+interface LoginArgs {
+  data: Omit<IUser, 'name'>
+}
+interface UdpateUserArgs {
+  data: Omit<IUser, 'password'>
+}
 
 export default {
   Query: {
-    async currentUser(_: unknown, __: unknown, {user}) {
-      console.log(user)
-      return JSON.stringify({ name: {_id: "342", name: 'lskd', email: 'sdfk'}})
+    async currentUser(_: unknown, __: unknown, {user}: {user: IAuthPayload}) {
+      try {
+        return await getCurrentUser(user._id);
+      } catch (err) {
+        handleError(err as AllError);
+      }
     }
   },
   Mutation: {
@@ -33,6 +43,13 @@ export default {
       } catch (err) {
         handleError(err as AllError)
       }
-    }
+    },
+    async updateUser(_: unknown, {data}: UdpateUserArgs, {user}: {user: IAuthPayload}) {
+      try {
+        return updateUser(user._id, data);
+      } catch (err) {
+        handleError(err as AllError)
+      }
+    },
   },
 }

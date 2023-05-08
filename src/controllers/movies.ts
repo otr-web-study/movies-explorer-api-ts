@@ -1,46 +1,27 @@
-import Movie from '../models/movie';
-import { handleObjectNotFound, isCurrentUserOwner } from '../utils/utils';
 import { MESSAGE_MOVIE_DELETED } from '../config/constants';
 import { AuthRequest, CreateMovieRequest, DeleteMovieRequest } from '../types/requests';
 import { NextFunction, Response } from 'express';
+import {
+  getMovies as sharedGetMovies,
+  createMovie as sharedCreateMovie,
+  deleteMovie as sharedDeleteMovie,
+} from '../sharedControllers/movies';
 
 export const getMovies = (req: AuthRequest, res: Response, next: NextFunction) => {
   const owner = req.user._id;
 
-  Movie.find({ owner })
+  sharedGetMovies(owner)
     .then((movie) => res.send(movie))
     .catch(next);
 };
 
 export const createMovie = (req: CreateMovieRequest, res: Response, next: NextFunction) => {
-  const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-  } = req.body;
+  const data = req.body;
   const owner = req.user._id;
 
-  Movie.create({
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
-    owner,
+  sharedCreateMovie({
+    ...data,
+    owner
   })
     .then((movie) => res.status(201).send(movie))
     .catch(next);
@@ -48,11 +29,9 @@ export const createMovie = (req: CreateMovieRequest, res: Response, next: NextFu
 
 export const deleteMovie = (req: DeleteMovieRequest, res: Response, next: NextFunction) => {
   const { _id } = req.params;
+  const owner = req.user._id;
 
-  Movie.findById(_id)
-    .then(handleObjectNotFound)
-    .then((movie) => isCurrentUserOwner(req, movie))
-    .then((movie) => movie.remove())
+  sharedDeleteMovie(_id, owner)
     .then(() => res.send({ message: MESSAGE_MOVIE_DELETED }))
     .catch(next);
 };

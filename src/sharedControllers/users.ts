@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/user';
 import { secret } from '../config/config';
+import { handleObjectNotFound } from '../utils/utils';
 import { IUser, RespondUser } from '../types/models';
 
 
@@ -30,4 +31,16 @@ export const login = (email: string, password: string): Promise<{token: string}>
 
       return ({ token });
     });
+}
+
+export const getCurrentUser = (userId: string) => {
+  return User.findById(userId)
+    .then(handleObjectNotFound);
+}
+
+export const updateUser = (userId: string, data: Omit<IUser, 'password'>) => {
+  return User.findByIdAndUpdate(userId, data, {
+    new: true, runValidators: true,
+  })
+    .then(handleObjectNotFound);
 }
